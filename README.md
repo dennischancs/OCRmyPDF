@@ -8,8 +8,8 @@ ocrmypdf及各项依赖先使用`apk add ocrmypdf`安装，然后卸载并安装
 > - watchdog: [bernmic/ocrmypdf-watchdog: A watchdog for OCRMyPDF written in go](https://github.com/bernmic/ocrmypdf-watchdog)
 
 ## 简要说明：
-1、`dennischancs/ocrmypdf:arm64v8-latest` 保留了 `jbarlow83/OCRmyPDF` 所有脚本，容器入口为 `/usr/bin/ocrmypdf` ；
-2、`dennischancs/ocrmypdf-watchdog:arm64v8-latest`，基于前一镜像，添加了`sseemayer/OCRmyPDF-web`和`bernmic/ocrmypdf-watchdog`，容器入口为 `/app/watchdog`。
+1. `dennischancs/ocrmypdf:arm64v8-latest` 保留了 `jbarlow83/OCRmyPDF` 所有脚本，容器入口为 `/usr/bin/ocrmypdf` ；
+2.`dennischancs/ocrmypdf-watchdog:arm64v8-latest`，基于前一镜像，添加了`sseemayer/OCRmyPDF-web`和`bernmic/ocrmypdf-watchdog`，容器入口为 `/app/watchdog`。
 
 ## 使用方法：
 
