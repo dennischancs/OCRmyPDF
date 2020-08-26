@@ -13,10 +13,10 @@ RUN cd /app &&\
    chmod 755 hugweb/index.htm hugweb/server.py watchdog entrypoint.sh 
 
 # hugweb webservice
-EXPOSE 8000
+EXPOSE 5250
 
 # watchdog volume
-VOLUME /in /out
+VOLUME [/in /out]
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 # ENTRYPOINT ["/app/watchdog"]
