@@ -5,12 +5,16 @@ FROM dennischancs/ocrmypdf:arm64v8-latest
 
 # webservice [https://github.com/sseemayer/OCRmyPDF-web]
 # watchdog [you can build from `go get github.com/bernmic/ocrmypdf-watchdog`]
-COPY hugweb/server.py hugweb/index.htm /app/hugweb/
-COPY hugweb/static /app/hugweb/static/
+COPY hugweb/server.py hugweb/index.htm /app/
+COPY hugweb/static /app/static/
 COPY entrypoint.sh /app/
 COPY watchdog /app/
 RUN cd /app &&\
-   chmod 755 hugweb/index.htm hugweb/server.py watchdog entrypoint.sh 
+   chmod 755 index.htm server.py watchdog entrypoint.sh && \
+   # for fix the falcon 2.0.0 bug [`4 arguments but 5 were given`] if you install this version
+   sed -i 's#process_response( req, resp, resource, req_succeeded)#process_response( req, resp, resource)#' \
+         /usr/lib/python*/site-packages/falcon/api.py
+
 
 # hugweb webservice
 EXPOSE 5250

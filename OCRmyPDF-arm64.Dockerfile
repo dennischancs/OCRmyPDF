@@ -21,11 +21,11 @@ RUN apk add --no-cache  ocrmypdf && \
     curl https://bootstrap.pypa.io/get-pip.py | python3  && \
     # 卸载apk源里的旧版ocrmypdf
     pip3 uninstall -y ocrmypdf && \
-    # 安装最新的ocrmypdf，以及webservice依赖
+    # 安装最新的ocrmypdf，以及webservice依赖[falcon 2.0.0 has bug `4 arguments but 5 were given`]
     pip3 install --no-cache-dir ocrmypdf \
         appdirs \
-        falcon \
-        hug \
+        falcon==1.4.1 \
+        hug==2.4.8 \
         hug-middleware-cors \
         packaging \
         pyparsing \
