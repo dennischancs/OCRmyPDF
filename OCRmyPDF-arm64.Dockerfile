@@ -5,8 +5,8 @@ ENV LANG=C.UTF-8
 
 ##更新 镜像源
 RUN \
-    echo "http://mirrors.aliyun.com/alpine/edge/main" > /etc/apk/repositories && \
-    echo "http://mirrors.aliyun.com/alpine/edge/community" >> /etc/apk/repositories && \
+    # echo "http://mirrors.aliyun.com/alpine/edge/main" > /etc/apk/repositories && \
+    # echo "http://mirrors.aliyun.com/alpine/edge/community" >> /etc/apk/repositories && \
     apk upgrade --no-cache && \
     # 安装源里的ocrmypdf
     apk add --no-cache tzdata \
