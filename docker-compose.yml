@@ -3,7 +3,7 @@ services:
     ocrmypdf-watchdog:
         container_name: OCRmyPDF
         network_mode: none
-        #image: dennischan/ocrmypdf:arm64-latest
+        #image: dennischancs/ocrmypdf:arm64v8-latest
         build: '.'
         restart: always
         environment:
@@ -12,7 +12,7 @@ services:
             WATCHDOG_FREQUENCY: 5
             WATCHDOG_EXTENSIONS: pdf,jpg,jpeg,tif,tiff,png,gif
             OCRMYPDF_BINARY: ocrmypdf
-            OCRMYPDF_PARAMETER: -l chi_sim+eng+equ --rotate-pages --deskew --jobs 4 --output-type pdfa
+            OCRMYPDF_PARAMETER: -l chi_sim+eng+equ --tesseract-timeout 300 --rotate-pages --deskew --jobs 4 --output-type pdfa
         ports: 
             - "8888:8000"
         volumes:
