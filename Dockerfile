@@ -12,8 +12,7 @@ COPY watchdog /app/
 RUN cd /app &&\
    chmod 755 index.htm server.py watchdog entrypoint.sh && \
    # for fix the falcon 2.0.0 bug [`4 arguments but 5 were given`] if you install this version
-   sed -i 's#process_response( req, resp, resource, req_succeeded)#process_response( req, resp, resource)#' \
-         /usr/lib/python*/site-packages/falcon/api.py
+   sed -i 's#process_response(req, resp, resource, req_succeeded)#process_response(req, resp, resource)#' /usr/lib/python3.8/site-packages/falcon/api.py
 
 
 # hugweb webservice
