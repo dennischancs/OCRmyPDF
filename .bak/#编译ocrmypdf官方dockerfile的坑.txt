@@ -1,0 +1,32 @@
+坑啊！！官方版的那个dockerfile有问题，修了Bug，导致我好不容易编译出来，又没有ocrmypdf这个进程。
+然后还得从pip3 install ocrmypdf 安装了最新的11.0.1版。
+终于可以用了，但这样又觉得，被耍了！
+
+那这样，我还有什么编译的意义！
+
+---
+于是，去alpine的源中找，有没有ocrmypdf，只有9.8.1版。
+
+那就先安装再卸载，再从pip3 install ocrmypdf 安装最新版。
+然后，遇到了Bug，pikepdf不支持ocrmypdf 9.8.1，所以，又去找alpine里有没有编译好的最新的pikepdf，找到alpine edge版有。
+---
+
+于是，基于alpine:edge构建ocrmypdf镜像，成功！！非常简单！！
+
+=============以下是旧的尝试==========
+
+arm64的版本
+andy008给出了 buildx的方法，同时build arm64和amd64
+[OCRmyPDF/.github/workflows at master · andkrause/OCRmyPDF](https://github.com/andkrause/OCRmyPDF/tree/master/.github/workflows)
+[Image Layer Details - andy008/ocrmypdf:latest - sha256:f7f9ffa71b2eec826c8e687aa3216801583ef3205be454b1bd4341a4f31c5ad2 - Docker Hub](https://hub.docker.com/layers/andy008/ocrmypdf/latest/images/sha256-f7f9ffa71b2eec826c8e687aa3216801583ef3205be454b1bd4341a4f31c5ad2?context=explore)
+
+==========
+
+docker save dennischancs/ocrmypdf:arm64v8-latest > /var/media/ssdDATA/ocrmypdf-arm64v8.tar
+xz -9 -T 3 --block-size=100MiB -vv /var/media/ssdDATA/ocrmypdf-arm64v8.tar
+
+
+
+ocrmypdf -l eng+chi_sim test.pdf test-ocr.pdf
+
+docker run -v /root:/mnt -it --entrypoint bash  dennischancs/ocrmypdf:arm64v8-latest
