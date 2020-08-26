@@ -3,7 +3,7 @@
 ocrmypdf及各项依赖先使用`apk add ocrmypdf`安装，然后卸载并安装最新版 `pip3 uninstall ocrmypdf && pip3 install ocrmypdf` 。
 
 > 参考了以下几个仓库：
-> - 主程序：[jbarlow83/OCRmyPDF: OCRmyPDF adds an OCR text layer to scanned PDF files, allowing them to be searched](https://github.com/> jbarlow83/OCRmyPDF)
+> - 主程序：[jbarlow83/OCRmyPDF: OCRmyPDF adds an OCR text layer to scanned PDF files, allowing them to be searched](https://github.com/jbarlow83/OCRmyPDF)
 > - webservice: [sseemayer/OCRmyPDF-web: A tiny frontend for OCRing PDF files via the web.](https://github.com/sseemayer/OCRmyPDF-web)
 > - watchdog: [bernmic/ocrmypdf-watchdog: A watchdog for OCRMyPDF written in go](https://github.com/bernmic/ocrmypdf-watchdog)
 
@@ -30,8 +30,8 @@ docker create \
 ```
 
 > 注意：
-> `-l chi_sim+eng+equ` # OCR 中文+英文+数学公式
-> `--tesseract-timeout 300` # arm机器cpu性能有限,设置每页timeout为300秒避免程序因OCR时间较长而放弃该页
+>  `-l chi_sim+eng+equ` # OCR 中文+英文+数学公式
+>  `--tesseract-timeout 300` # arm机器cpu性能有限,设置每页timeout为300秒避免程序因OCR时间较长而放弃该页
 
 ## 功能
 - web服务功能：`http://ip:5250/`的web端，支持连续上传pdf，识别完成会自动更名并下载为`ocr-*.pdf`
