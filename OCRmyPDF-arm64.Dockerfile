@@ -47,6 +47,7 @@ RUN apk add --no-cache \
       tesseract-ocr-data-kor \
       tesseract-ocr-data-equ
 
+# 增加pytest以及watchdog/flash，编译PyMuPDF
 RUN apk add --no-cache \
       gcc python3-dev linux-headers \
       musl-dev mupdf-dev \
