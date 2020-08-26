@@ -1,0 +1,69 @@
+# OCRmyPDF arm64
+FROM alpine:edge@sha256:cfd04e2c9bfed5d883b14329da780888a6a4d1cbc421a0fb1ad076d81bff1d0e
+
+ENV LANG=C.UTF-8
+##更新 镜像源
+RUN \
+    echo "http://mirrors.aliyun.com/alpine/edge/main" > /etc/apk/repositories && \
+    echo "http://mirrors.aliyun.com/alpine/edge/community" >> /etc/apk/repositories && \
+    apk upgrade --no-cache && \
+    # 安装源里的ocrmypdf
+    apk add --no-cache tzdata \
+      bash curl python3 && \
+    # change the TimeZone
+    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+RUN apk add --no-cache  ocrmypdf && \
+    export all_proxy='socks5://192.168.1.110:7890' http_proxy='http://192.168.1.110:7890' https_proxy='http://192.168.1.110:7890' && \
+    # 安装最新最完整的pip3
+    curl https://bootstrap.pypa.io/get-pip.py | python3  && \
+    # 卸载apk源里的旧版ocrmypdf
+    pip3 uninstall ocrmypdf && \
+    # 安装最新的ocrmypdf，以及webservice依赖
+    pip3 install --no-cache-dir ocrmypdf \
+        appdirs \
+        falcon \
+        hug \
+        hug-middleware-cors \
+        packaging \
+        pyparsing \
+        python-mimeparse \
+        requests \
+        six && \
+    unset all_proxy http_proxy https_proxy
+
+RUN apk add --no-cache tesseract-ocr \
+      tesseract-ocr-data-chi_sim \
+      tesseract-ocr-data-chi_tra \
+      tesseract-ocr-data-deu \
+      tesseract-ocr-data-fra \
+      tesseract-ocr-data-por \
+      tesseract-ocr-data-spa \
+      tesseract-ocr-data-rus \
+      tesseract-ocr-data-jpn \
+      tesseract-ocr-data-kor \
+      tesseract-ocr-data-equ
+
+RUN mkdir /app
+WORKDIR /app
+
+## ---加入 watchdog，可以指定 -l的语言，定期扫描input文件夹，并ocr到output文件夹
+## ---加入 webservice，可指定语言，能上传和下载pdf文件
+
+# webservice [https://github.com/sseemayer/OCRmyPDF-web]
+COPY misc/server.py misc/index.htm misc/entrypoint.sh /app/
+COPY static /app/static/
+
+EXPOSE 8000
+
+# watchdog [you can build from `go get github.com/bernmic/ocrmypdf-watchdog`]
+COPY misc/watchdog /app/
+VOLUME /in /out
+
+RUN cd /app &&\
+   chmod 755 index.htm watchdog entrypoint.sh server.py
+
+ENTRYPOINT ["/app/entrypoint.sh"]
+# ENTRYPOINT ["/app/watchdog"]
+# ENTRYPOINT ["/usr/bin/ocrmypdf"]
+
