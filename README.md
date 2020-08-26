@@ -30,8 +30,8 @@ docker create \
 ```
 
 > 注意：
->  `-l chi_sim+eng+equ` # OCR 中文+英文+数学公式
->  `--tesseract-timeout 300` # arm机器cpu性能有限,设置每页timeout为300秒避免程序因OCR时间较长而放弃该页
+> - `-l chi_sim+eng+equ` # OCR 中文+英文+数学公式
+> - `--tesseract-timeout 300` # arm机器cpu性能有限,设置每页timeout为300秒避免程序因OCR时间较长而放弃该页
 
 ## 功能
 - web服务功能：`http://ip:5250/`的web端，支持连续上传pdf，识别完成会自动更名并下载为`ocr-*.pdf`
