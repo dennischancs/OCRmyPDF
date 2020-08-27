@@ -33,9 +33,20 @@ docker create \
   dennischancs/ocrmypdf-watchdog:arm64v8-latest
 ```
 
-> 注意：
-> - `-l chi_sim+eng+equ` # OCR 中文+英文+数学公式
-> - `--tesseract-timeout 300` # arm机器cpu性能有限,设置每页timeout为300秒避免程序因OCR时间较长而放弃该页
+注解：
+```bash
+ocrmypdf                      # it's a scriptable command line program
+   -l chi_sim+eng+equ         # OCR中文+英文+数学公式, it supports multiple languages
+   --tesseract-timeout 300    # arm机器cpu性能有限,设置每页timeout为300秒避免程序因OCR时间较长而放弃该页
+   --rotate-pages             # it can fix pages that are misrotated
+   --deskew                   # it can deskew crooked PDFs!
+   --jobs 4                   # it uses multiple cores by default
+   --output-type pdfa         # it produces PDF/A by default
+   --title "My PDF"           # it can change output metadata
+   input_scanned.pdf          # takes PDF input (or images)
+   output_searchable.pdf      # produces validated PDF output
+```
+
 
 ## 功能
 - web服务功能：`http://ip:5250/`的web端，支持连续上传pdf，识别完成会自动更名并下载为`ocr-*.pdf`
