@@ -1,5 +1,5 @@
 # OCRmyPDF based on alpine:edge linux/arm64/v8
-FROM alpine:edge@sha256:cfd04e2c9bfed5d883b14329da780888a6a4d1cbc421a0fb1ad076d81bff1d0e
+FROM alpine:edge
 
 ENV LANG=C.UTF-8
 
