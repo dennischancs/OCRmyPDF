@@ -2,8 +2,9 @@
 
 name: buildx
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# 也许多架构build太消耗资源
+# 此镜像 DOCKER_PLATFORMS=linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x 不能成功
+# 选两个自己常用的吧：DOCKER_PLATFORMS=linux/amd64,linux/arm64
 on:
   push:
     branches: [ master ]
@@ -89,7 +90,7 @@ jobs:
         id: prepare
         run: |
           DOCKER_IMAGE=dennischancs/ocrmypdf-watchdog
-          DOCKER_PLATFORMS=linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x
+          DOCKER_PLATFORMS=linux/amd64,linux/arm64
           VERSION=latest
       
           if [[ $GITHUB_REF == refs/tags/* ]]; then

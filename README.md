@@ -1,4 +1,4 @@
-# OCRmyPDF not only for arm64v8
+# OCRmyPDF for amd64 & arm64v8
 
 `已经使用github的buildx action实现构建支持多cpu的镜像`
 
