@@ -20,7 +20,7 @@ def static(fn):
 
 
 @hug.post('/ocr', output=hug.output_format.file)
-def ocr(body, response, language: "The language(s) to use for OCR"="eng"):
+def ocr(body, response, language: "The language(s) to use for OCR"="chi_sim+eng+equ"):
     if not len(body) == 1:
         raise Exception("Need exactly one file!")
 
