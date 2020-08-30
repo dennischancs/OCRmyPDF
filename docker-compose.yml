@@ -3,7 +3,8 @@ services:
     ocrmypdf-watchdog:
         container_name: OCRmyPDF
         network_mode: none
-        #image: dennischancs/ocrmypdf
+        # 打开此注释，不需要从dennischancs/ocrmypdf构建并配置；直接Pull ocrmypdf-watchdog 镜像，配置使用即可
+        #image: dennischancs/ocrmypdf-watchdog
         build: '.'
         restart: always
         ports: 

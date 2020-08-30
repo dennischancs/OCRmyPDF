@@ -1,4 +1,7 @@
-# OCRmyPDF for arm64v8
+# OCRmyPDF not only for arm64v8
+
+`已经使用github的buildx action实现构建支持多cpu的镜像`
+
 基于alpine:edge的arm64v8镜像重新制作，适用于arm64v8机器。
 ocrmypdf及各项依赖先使用`apk add ocrmypdf`安装，然后卸载并安装最新版 `pip3 uninstall ocrmypdf && pip3 install ocrmypdf` 。
 
@@ -20,6 +23,7 @@ ocrmypdf及各项依赖先使用`apk add ocrmypdf`安装，然后卸载并安装
 ```bash
 docker create \
   --name=ocrmypdf \
+  --hostname=ocrmypdf \
   -e OCRMYPDF_IN='/in' \
   -e OCRMYPDF_OUT='/out' \
   -e WATCHDOG_FREQUENCY=5 \
@@ -30,7 +34,7 @@ docker create \
   -v /var/media/ssdDATA/ocrfolder/input:/in \
   -v /var/media/ssdDATA/ocrfolder/output:/out \
   --restart unless-stopped \
-  dennischancs/ocrmypdf-watchdog:arm64v8-latest
+  dennischancs/ocrmypdf-watchdog
 ```
 
 注解：
@@ -47,6 +51,7 @@ ocrmypdf                      # it's a scriptable command line program
    output_searchable.pdf      # produces validated PDF output
 ```
 
+`docker-compose.yml` 是从
 
 ## 功能
 - web服务功能：`http://ip:5250/`的web端，支持连续上传pdf，识别完成会自动更名并下载为`ocr-*.pdf`
