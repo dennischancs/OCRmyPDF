@@ -23,8 +23,8 @@ RUN apk add --no-cache  ocrmypdf && \
     # 安装最新的ocrmypdf，以及webservice依赖[falcon 2.0.0 has bug `4 arguments but 5 were given`]
     pip3 install --no-cache-dir ocrmypdf \
         appdirs \
-        falcon==1.4.1 \
-        hug==2.4.8 \
+        falcon \
+        hug \
         hug-middleware-cors \
         packaging \
         pyparsing \
