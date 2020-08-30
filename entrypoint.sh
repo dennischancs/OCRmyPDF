@@ -1,3 +1,3 @@
 #!/bin/sh
-exec hug -f /app/server.py -p 5250 & 
+exec hug -f /app/server.py -p 80 & 
 /app/watchdog
