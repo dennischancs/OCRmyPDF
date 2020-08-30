@@ -12,75 +12,148 @@ on:
   pull_request:
     branches: [ master ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  buildx:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+  # buildx ocrmypdf
+  job1:
+    buildx:
+      # The type of runner that the job will run on
+      runs-on: ubuntu-latest
+    
+      # Steps represent a sequence of tasks that will be executed as part of the job
+      steps:
+        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+        - name: Checkout
+          uses: actions/checkout@v2
+    
+        - name: Prepare
+          id: prepare
+          run: |
+            DOCKER_IMAGE=dennischancs/ocrmypdf
+            DOCKER_PLATFORMS=linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x
+            VERSION=edge
+    
+            if [[ $GITHUB_REF == refs/tags/* ]]; then
+              VERSION=${GITHUB_REF#refs/tags/v}
+            fi
+            if [ "${{ github.event_name }}" = "schedule" ]; then
+              VERSION=nightly
+            fi
+    
+            TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
+            if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+              TAGS="$TAGS --tag ${DOCKER_IMAGE}:latest"
+            fi
+    
+            echo ::set-output name=docker_image::${DOCKER_IMAGE}
+            echo ::set-output name=version::${VERSION}
+            echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
+              --build-arg VERSION=${VERSION} \
+              --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+              --build-arg VCS_REF=${GITHUB_SHA::8} \
+              ${TAGS} --file ./ocrmypdf.Dockerfile ./
+    
+        # Runs a single command using the runners shell
+        - name: Set up Docker Buildx
+          id: buildx
+          uses: crazy-max/ghaction-docker-buildx@v3
+          with:
+            buildx-version: latest
+            qemu-version: latest
+    
+        - name: Available platforms
+          run: echo ${{ steps.buildx.outputs.platforms }}
+    
+        # Runs a set of commands using the runners shell
+        - name: Run Buildx
+          run: |
+            docker buildx build --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
+         
+        - name: Login to DockerHub
+          if: success() && github.event_name != 'pull_request'
+          uses: docker/login-action@v1
+          with:
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
+        
+        - name: Docker Buildx (push)
+          if: success() && github.event_name != 'pull_request'
+          run: |
+            docker buildx build --output "type=image,push=true" ${{ steps.prepare.outputs.buildx_args }}
+        
+        - name: Inspect image
+          if: always() && github.event_name != 'pull_request'
+          run: |
+            docker buildx imagetools inspect ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}
+    
+  # buildx ocrmypdf-watchdog with webservice
+  job2:
+    # This workflow contains a single job called "build"
+    buildx:
+      # The type of runner that the job will run on
+      runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v2
+      # Steps represent a sequence of tasks that will be executed as part of the job
+      steps:
+        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+        - name: Checkout
+          uses: actions/checkout@v2
 
-      - name: Prepare
-        id: prepare
-        run: |
-          DOCKER_IMAGE=dennischancs/ocrmypdf-watchdog
-          DOCKER_PLATFORMS=linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x
-          VERSION=edge
+        - name: Prepare
+          id: prepare
+          run: |
+            DOCKER_IMAGE=dennischancs/ocrmypdf-watchdog
+            DOCKER_PLATFORMS=linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x
+            VERSION=edge
 
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            VERSION=nightly
-          fi
+            if [[ $GITHUB_REF == refs/tags/* ]]; then
+              VERSION=${GITHUB_REF#refs/tags/v}
+            fi
+            if [ "${{ github.event_name }}" = "schedule" ]; then
+              VERSION=nightly
+            fi
 
-          TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
-          if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-            TAGS="$TAGS --tag ${DOCKER_IMAGE}:latest"
-          fi
+            TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
+            if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+              TAGS="$TAGS --tag ${DOCKER_IMAGE}:latest"
+            fi
 
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
-          echo ::set-output name=version::${VERSION}
-          echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
-            --build-arg VERSION=${VERSION} \
-            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
-            --build-arg VCS_REF=${GITHUB_SHA::8} \
-            ${TAGS} --file ./Dockerfile ./
+            echo ::set-output name=docker_image::${DOCKER_IMAGE}
+            echo ::set-output name=version::${VERSION}
+            echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
+              --build-arg VERSION=${VERSION} \
+              --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+              --build-arg VCS_REF=${GITHUB_SHA::8} \
+              ${TAGS} --file ./Dockerfile ./
 
-      # Runs a single command using the runners shell
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v3
-        with:
-          buildx-version: latest
-          qemu-version: latest
+        # Runs a single command using the runners shell
+        - name: Set up Docker Buildx
+          id: buildx
+          uses: crazy-max/ghaction-docker-buildx@v3
+          with:
+            buildx-version: latest
+            qemu-version: latest
 
-      - name: Available platforms
-        run: echo ${{ steps.buildx.outputs.platforms }}
+        - name: Available platforms
+          run: echo ${{ steps.buildx.outputs.platforms }}
 
-      # Runs a set of commands using the runners shell
-      - name: Run Buildx
-        run: |
-          docker buildx build --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
-       
-      - name: Login to DockerHub
-        if: success() && github.event_name != 'pull_request'
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      
-      - name: Docker Buildx (push)
-        if: success() && github.event_name != 'pull_request'
-        run: |
-          docker buildx build --output "type=image,push=true" ${{ steps.prepare.outputs.buildx_args }}
-      
-      - name: Inspect image
-        if: always() && github.event_name != 'pull_request'
-        run: |
-          docker buildx imagetools inspect ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}
+        # Runs a set of commands using the runners shell
+        - name: Run Buildx
+          run: |
+            docker buildx build --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
+         
+        - name: Login to DockerHub
+          if: success() && github.event_name != 'pull_request'
+          uses: docker/login-action@v1
+          with:
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
+        
+        - name: Docker Buildx (push)
+          if: success() && github.event_name != 'pull_request'
+          run: |
+            docker buildx build --output "type=image,push=true" ${{ steps.prepare.outputs.buildx_args }}
+        
+        - name: Inspect image
+          if: always() && github.event_name != 'pull_request'
+          run: |
+            docker buildx imagetools inspect ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}
