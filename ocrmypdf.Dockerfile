@@ -2,7 +2,7 @@
 FROM alpine:edge
 
 ENV LANG=C.UTF-8
-
+ENV TZ=Asia/Shanghai
 ##更新 镜像源
 RUN \
    #sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
@@ -11,7 +11,7 @@ RUN \
     apk add --no-cache tzdata \
       bash curl python3 && \
     # change the TimeZone
-    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    cp /usr/share/zoneinfo/$TZ /etc/localtime
 
 # 安装ocrmypdf，自动安装tesseract-ocr主体
 RUN apk add --no-cache  ocrmypdf && \
