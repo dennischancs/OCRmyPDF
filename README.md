@@ -30,7 +30,7 @@ docker create \
   -e WATCHDOG_EXTENSIONS='pdf,jpg,jpeg,tif,tiff,png,gif' \
   -e OCRMYPDF_BINARY=ocrmypdf  \
   -e OCRMYPDF_PARAMETER='-l chi_sim+eng+equ --tesseract-timeout 300 --rotate-pages --deskew --jobs 4 --output-type pdfa'  \
-  -p 5250:5250 \
+  -p 5250:80 \
   -v /var/media/ssdDATA/ocrfolder/input:/in \
   -v /var/media/ssdDATA/ocrfolder/output:/out \
   --restart unless-stopped \

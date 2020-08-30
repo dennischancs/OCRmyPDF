@@ -22,7 +22,7 @@ RUN cd /app &&\
 WORKDIR /app
 
 # hugweb webservice
-EXPOSE 5250
+EXPOSE 80
 
 # watchdog volume
 VOLUME [/in /out]
