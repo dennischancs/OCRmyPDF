@@ -1,4 +1,4 @@
-# OCRmyPDF based on alpine:edge linux/arm64/v8
+# OCRmyPDF based on alpine:edge
 FROM alpine:edge
 
 ENV LANG=C.UTF-8
