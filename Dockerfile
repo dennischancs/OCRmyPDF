@@ -25,7 +25,7 @@ WORKDIR /app
 EXPOSE 80
 
 # watchdog volume
-VOLUME [/in /out]
+VOLUME /in /out
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 # ENTRYPOINT ["/app/watchdog"]
