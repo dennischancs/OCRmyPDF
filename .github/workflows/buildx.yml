@@ -25,7 +25,7 @@ jobs:
         run: |
           DOCKER_IMAGE=dennischancs/ocrmypdf
           DOCKER_PLATFORMS=linux/amd64,linux/arm64
-          VERSION=latest
+          VERSION=selfuse
       
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
